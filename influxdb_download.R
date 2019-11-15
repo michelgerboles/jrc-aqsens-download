@@ -1,6 +1,6 @@
-#===================================
+#================================= =
 #### Dependencies and Functions ####
-#===================================
+#================================= =
 #Set WD
 setwd("/home/rstudio/import")
 source("../app/Functions4ASE.R")
@@ -20,39 +20,60 @@ library(timezone)
 library(lubridate)
 library(reshape)
 library(plyr)
-
-#========================
-#### Start of script ####
-#========================
-
-# Set config parameters
-# PROXY parameters
+#======================== =
+#### Config parameters ####
+#======================== =
+#
+# PROXY
+#
 PROXY    <- FALSE
 URL      <- NULL
 PORT     <- NULL
 LOGIN    <- NULL
 PASSWORD <- NULL
-
-# INFLUXDB parameters
+#
+# INFLUXDB
+#
 Host            <- "influxdb1.liberaintentio.com"
+Port            <- 8086
 User            <- "52North"
 Pass            <- "JmaxNBTS"
+Db              <- "jrcispra"
+# Table in influxdb -> sensor to download
+Dataset         <- "AirSensEUR16"
+configFile      <- "./170604 ASE_R24 NO2B43F_COA4_OXA431_NOB4_Training2017.asc"
+# Timezone in influxdb
+Influx.TZ       <- "UTC"
+#
+# How many records per HTTP request to influxdb to be returned
+# used in Down_Influx() in Functions4ASE.R:1618
+# Hidden by INFLUXDB()
+Page            <- 10000
+#
+# time average for the download of Influx data
+#
+Mean            <- 10
+#
+# OTHER
+#
 name.SQLite     <- "airsenseur.db"
 name.SQLite.old <- "airsenseur.db.old"
-Db              <- "jrcispra"
-Dataset         <- "AirSensEUR16"
-Influx.TZ       <- "UTC"
 use_google      <- FALSE
-Page            <- 10000
-Mean            <- 10
-
+#====================== =
+#### Start of script ####
+#====================== =
+#
+# Request METADATA
+#
 # checking if data are already downlaoded
 downloadStatus <- Check_Download(Influx.name = Dataset, WDinput = getwd(), UserMins = Mean)
 # Configuration of electrochemical sensors:
-sensorConfiguration         <- ASEPanel04Read(ASEPanel04File = c("./170604 ASE_R24 NO2B43F_COA4_OXA431_NOB4_Training2017.asc"))
-
+sensorConfiguration <- ASEPanel04Read(ASEPanel04File = c(configfile))
+#
+# Download DATA
+#
 # Downloading data and saving files
 INFLUXDB(WDoutput = getwd(), DownloadSensor = downloadStatus, UserMins = Mean,
          PROXY = PROXY, URL = URL  , PORT = as.numeric(PORT), LOGIN = LOGIN, PASSWORD = PASSWORD, Down.Influx = TRUE,
-         Host = Host  , Port = 8086, User = User, Pass = Pass, name.SQLite = name.SQLite, name.SQLite.old = name.SQLite.old,
+         Host = Host  , Port = Port, User = User, Pass = Pass, name.SQLite = name.SQLite, name.SQLite.old = name.SQLite.old,
          Db = Db      , Dataset = Dataset, Influx.TZ = Influx.TZ, sens2ref = NULL, asc.File = sensorConfiguration)
