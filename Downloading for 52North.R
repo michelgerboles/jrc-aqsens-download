@@ -54,12 +54,19 @@ PingThisSite <- function(test.site) {
 havingIP <- function() {
 
     #browser()
-    if (.Platform$OS.type == "windows") {
-        ipmessage <- system("ipconfig", intern = TRUE)
-    } else {
-        ipmessage <- system("/sbin/ifconfig", intern = TRUE)
+    binary <- "ipconfig"
+    if (.Platform$OS.type != "windows") {
+        # test for ifconfig
+        if (!system("which ifconfig > /dev/null", intern = FALSE)) {
+            binary = "ifconfig"
+        } else if (!system("which ip > /dev/null", intern = FALSE)) {
+            binary = "ip addr"
+        } else {
+            stop("Could not identify binary for IP identification. Tried: ifconfig, ipconfig, ip")
+        }
     }
-    
+    ipmessage <- system(binary, intern= TRUE)
+
     # validIP <- "((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)[.]) {3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"
     validIP <- "(?<=[^0-9.]|^)[1-9][0-9]{0,2}([.]([0-9]{0,3})){3}(?=[^0-9.]|$)"
 
