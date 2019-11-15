@@ -1,7 +1,10 @@
 #========================
 #### Needed functions ####
 #========================
-
+#
+# Duplicate Code: Functions4ASE.R:99
+#                 This version checked some time ago (?) via havingIP the connection to the internet
+#
 ### Function Load.Packages
 Load.Packages <- function(list.Packages, verbose = FALSE) {
     # This function install packages if needed and load them
@@ -37,7 +40,9 @@ Load.Packages <- function(list.Packages, verbose = FALSE) {
 
     cat("-----------------------------------------------------------------------------------\n")
 }
-
+#
+# Duplicate Code: Functions4ASE.R:3399
+#
 # 170609 MG : Pinging WEB site
 PingThisSite <- function(test.site) {
     # this function returns TRUE if it is possible to ping a test.site
@@ -50,6 +55,9 @@ PingThisSite <- function(test.site) {
     require(RCurl)
     url.exists(test.site)
 }
+#
+# Duplicate Code: Functions4ASE.R:3424
+#
 # 170609 MG : Pinging WEB site
 havingIP <- function() {
 
@@ -72,6 +80,9 @@ havingIP <- function() {
 
     return(any(unlist(gregexpr( validIP, ipmessage, perl = TRUE) ) != -1))
 }
+#
+# Duplicate Code: Functions4ASE.R:1576
+#
 # 161120 MG : Downloading AirSensEUR.db data using the Influx protocol, create or update the airsenseur.db SQLite database, get timezone
 Json_To_df <- function(JSON, Numeric = NULL, verbose = FALSE, Discard = NULL) {
     # JSON      : class "response" as returned by function httr::GET for INFLUX
@@ -114,6 +125,10 @@ Json_To_df <- function(JSON, Numeric = NULL, verbose = FALSE, Discard = NULL) {
         return(JSON)
     }
 }
+#
+# Duplicate Code: Functions4ASE.R:1618
+#                 Minimal differences <- because of current improvements? which file is the current one?
+#
 Down_Influx <- function(PROXY = FALSE, URL = NULL, PORT = NULL, LOGIN = NULL, PASSWORD = NULL,
                         Host, Port = 8086, User, Pass, name.SQLite,name.SQLite.old,  Db, Dataset, Influx.TZ = NULL,
                         Page = 200, Mean = 1, use_google = TRUE) {
@@ -452,7 +467,10 @@ Down_Influx <- function(PROXY = FALSE, URL = NULL, PORT = NULL, LOGIN = NULL, PA
     #browser()
     return(Influx.TZ)
 }
-
+#
+# Duplicate Code: Functions4ASE.R:846
+#                 Minimal differences <- package installation
+#
 # 161029 MG: Check General.R data file and the retrieve.data true or false
 Check_Download <- function(Influx.name = NULL, WDinput, UserMins) {
     # Influx.name              = Name of for AirSensEUR in airsenseur.db, default Value NULL
@@ -806,7 +824,9 @@ Check_Download <- function(Influx.name = NULL, WDinput, UserMins) {
                 ExistFil.data.SOS    = ExistFil.data.SOS    , Retrieve.data.SOS    = Retrieve.data.SOS    , DateIN.SOS.prev      = DateIN.SOS.prev,     DateEND.SOS.prev      = DateEND.SOS.prev,
                 ExistFil.data.General= ExistFil.data.General, Retrieve.data.General= Retrieve.data.General, DateIN.General.prev  = DateIN.General.prev, DateEND.General.prev  = DateEND.General.prev))
 }
-
+#
+# Duplicate Code: Functions4ASE.R:1987
+#
 # 161123 MG : Sqlite2df                 converting a local airsenseur.db into a General dataframe
 Sqlite2df <- function(name.SQLite, Dataset, Influx.TZ, UserMins = NULL, DownloadSensor = NULL, Page = NULL, Complete = FALSE, asc.File=NULL) {
     # Sqlite2df transforms an airsenseur.db table into a General data frame. airsenseur.db shall be created previously with Down_Influx
@@ -1294,7 +1314,9 @@ Sqlite2df <- function(name.SQLite, Dataset, Influx.TZ, UserMins = NULL, Download
     }
     #browser()
 }
-
+#
+# Duplicate Code: Functions4ASE.R:3879
+#
 # 170609 MG : Reading the sensor config file
 ASEPanel04Read <- function(ASEPanel04File = NULL , dirASEPanel = c("AirSensEURPanelR04"), dirCurrent = getwd()) {
     # This function read the config parameters of the AirSensEURPanel version 0.4 - All values are in Hexadecimal and need be converted
