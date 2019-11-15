@@ -1553,8 +1553,8 @@ setwd(choose.dir())
 # "S:/Box Sync/AirSensEUR/Fieldtests/Shiny/For52North/General_data"
 
 # PROXY parameters
-PROXY = TRUE     
-URL      = "10.168.209.72"; PORT     = 8012; LOGIN    = NULL; PASSWORD = NULL
+PROXY = FALSE
+URL      = NULL; PORT     = NULL; LOGIN    = NULL; PASSWORD = NULL
 
 # INFLUXDB parameters
 Host            = "influxdb1.liberaintentio.com"
