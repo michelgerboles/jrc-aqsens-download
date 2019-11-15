@@ -1549,7 +1549,8 @@ INFLUXDB <- function(WDoutput,DownloadSensor,UserMins,
 
 # Set config parameters
 #Set WD
-setwd(choose.dir())
+#setwd(choose.dir())
+setwd("/home/rstudio/import")
 # "S:/Box Sync/AirSensEUR/Fieldtests/Shiny/For52North/General_data"
 
 # PROXY parameters
@@ -1572,7 +1573,8 @@ Mean            = 10
 # checking if data are already downlaoded
 DownloadSensor <- Check_Download(Influx.name = Dataset, WDinput = getwd(), UserMins = Mean)
 # Configuration of electrochemical sensors:
-Shield         <- ASEPanel04Read(ASEPanel04File = choose.files())     
+#Shield         <- ASEPanel04Read(ASEPanel04File = choose.files())
+Shield         <- ASEPanel04Read(ASEPanel04File = c("./170604 ASE_R24 NO2B43F_COA4_OXA431_NOB4_Training2017.asc"))
 
 # Downloading data and saving files
 INFLUXDB(WDoutput = getwd(), DownloadSensor = DownloadSensor, UserMins = Mean,
