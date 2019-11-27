@@ -7,8 +7,6 @@ source("../app/Functions4ASE.R")
 library(dplyr)
 library(tidyverse)
 library(data.table)
-library(tidyverse)
-library(data.table)
 library(BMS)
 library(DBI)
 library(RSQLite)
@@ -68,7 +66,7 @@ use_google      <- FALSE
 # checking if data are already downlaoded
 downloadStatus <- Check_Download(Influx.name = Dataset, WDinput = getwd(), UserMins = Mean)
 # Configuration of electrochemical sensors:
-sensorConfiguration <- ASEPanel04Read(ASEPanel04File = c(configfile))
+sensorConfiguration <- ASEPanel04Read(ASEPanel04File = c(configFile))
 #
 # Download DATA
 #
