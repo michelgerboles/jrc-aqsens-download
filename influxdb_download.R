@@ -50,7 +50,7 @@ Page            <- 10000
 #
 # time average for the download of Influx data
 #
-Mean            <- 10
+Mean            <- 1
 #
 # OTHER
 #
