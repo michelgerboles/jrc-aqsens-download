@@ -56,6 +56,7 @@ Mean            <- 10
 #
 name.SQLite     <- "airsenseur.db"
 name.SQLite.old <- "airsenseur.db.old"
+# default = TRUE, if TRUE the google API is used for detecting time zone from coordinates (require port 443)
 use_google      <- FALSE
 #====================== =
 #### Start of script ####
@@ -64,6 +65,9 @@ use_google      <- FALSE
 # Request METADATA
 #
 # checking if data are already downlaoded
+# Influx.name := Name of for AirSensEUR in airsenseur.db, default Value NULL
+# WDinput     := Sub directory of DisqueFieldtest where are the Refdata and InfluxData Rdata files
+# UserMins    := periodicity of data requested after final data treatment
 downloadStatus <- Check_Download(Influx.name = Dataset, WDinput = getwd(), UserMins = Mean)
 # Configuration of electrochemical sensors:
 sensorConfiguration <- ASEPanel04Read(ASEPanel04File = c(configFile))
