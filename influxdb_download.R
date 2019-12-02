@@ -2,8 +2,8 @@
 #### Dependencies and Functions ####
 #================================= =
 #Set WD
-setwd("/home/rstudio/import")
-source("../app/Functions4ASE.R")
+# TODO set the path to the correct folder!
+source("../../ec-jrc/airsenseur-calibration/Functions4ASE.R")
 library(dplyr)
 library(tidyverse)
 library(data.table)
