@@ -75,7 +75,7 @@ cfg_file           <- file.path(DisqueFieldtestDir,"General_data",paste0(ASE_nam
 SETTIME_file       <- file.path(DisqueFieldtestDir,"General_data",paste0(ASE_name,"_SETTIME.cfg"))
 Servers_file       <- file.path(DisqueFieldtestDir,"General_data",paste0(ASE_name,"_Servers.cfg"))
 
-# Configurationa nd reading of data
+# Configuration and reading of data
 Config <- CONFIG(DirShiny, Config_Files, shiny = FALSE)
 # Returning a list with 4 elements see below
 # Config[["Server"]]   : server parameters
