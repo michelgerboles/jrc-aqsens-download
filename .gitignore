@@ -1,4 +1,5 @@
-*.Rdata
 *.csv
-*.old
 *.db
+*.old
+*.Rdata
+*.Rproj*
