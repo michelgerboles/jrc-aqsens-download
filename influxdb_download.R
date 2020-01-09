@@ -1,9 +1,12 @@
 # Set Directory of the script
 # This script shall be in the same directory as the App.R, functions4ASE.R ...
-library(rChoiceDialogs)
-if (!exists("DisqueFieldtest")) DisqueFieldtest <- jchoose.dir()
+# @michel: I down think so: we want to have our own structure which do not use
+#          any gui (shiny + x) libraries and code. The process will be run on
+#          a headless server as one-shoot process which mounts the data and
+#          configuration files.
+#
+DisqueFieldtest <- getwd()
 DirShiny        <- DisqueFieldtest
-setwd(DisqueFieldtest)
 
 #   1.d Loading packages (global.R)
 source("global.R")
