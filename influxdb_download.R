@@ -10,7 +10,7 @@ DirShiny        <- DisqueFieldtest
 
 #   1.d Loading packages (global.R)
 source("global.R")
-source("functions4ASE.R")
+source("Functions4ASE.R")
 
 ############### at Eike: you should select here ASE_name in the way you prefer ###############################################
 # AirSensEUR name: The 1st one selected in the list of configured AirSensEURs
