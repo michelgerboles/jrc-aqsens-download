@@ -14,8 +14,8 @@ source("Functions4ASE.R")
 
 ############### at Eike: you should select here ASE_name in the way you prefer ###############################################
 # AirSensEUR name: The 1st one selected in the list of configured AirSensEURs
-Config_Files     <- list.files(path = getwd(), pattern = glob2rx("ASEconfig*.R"))[13]
-ASE_name         <- basename(Config_Files)      ; for (i in c("\\.[[:alnum:]_]+$" ,"ASEconfig")) ASE_name     <- sub(pattern = i,replacement = '', basename(as.character(ASE_name)))
+Config_Files     <- list.files(path = getwd(), pattern = glob2rx("ASEconfig*.R"))[1]
+ASE_name         <- "JRC_16" # basename(Config_Files)      ; for (i in c("\\.[[:alnum:]_]+$" ,"ASEconfig")) ASE_name     <- sub(pattern = i,replacement = '', basename(as.character(ASE_name)))
 #
 # @michel: Should the final folder be <repo>/JRC_16/General_data/?
 # @michel: Should the correct list contain all the *.cfg files in this folder?
