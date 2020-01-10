@@ -21,7 +21,7 @@ ASE_name         <- "JRC_16" # basename(Config_Files)      ; for (i in c("\\.[[:
 # @michel: Should the correct list contain all the *.cfg files in this folder?
 # @michel: The station variable should be configured outside out import script
 #
-# Setting the  directory from whcih to copy the config files
+# Setting the  directory from which to copy the config files
 old_Config_Files <- list.files(path = getwd(), pattern = glob2rx("ASEconfig*.R"))[12]
 old_ASE_name     <- basename(old_Config_Files)  ; for (i in c("\\.[[:alnum:]_]+$" ,"ASEconfig")) old_ASE_name <- sub(pattern = i,replacement = '', basename(as.character(old_ASE_name)))
 
@@ -172,7 +172,7 @@ if (file.exists(General.file)) {
             DT.General[Ref.both.Temp.Hum, Ref.Td_deficit := DT.General[["Ref.Temp"]][Ref.both.Temp.Hum] - Td]
         }
     }
-    
+
     # se c'e' General.Rdata ma alcuni sensori o referenze di Ref e Influx non sono in DT.General le si combina
     if (!all(c(names(Ref)[grep(pattern = paste(c("Bin.", "boardTimeStamp", "gpsTimestamp"), collapse = "|"),
                                x = names(Ref), invert = T)], names(Influx)) %in% names(DT.General)) ) {
@@ -300,7 +300,7 @@ Download.Sensor <- Check_Download(Influx.name = Config$Server$Dataset,
                                   InfluxData  = if (!is.null(Influx)) Influx else NA,
                                   SOSData     = if (!is.null(Sos))    Sos else NA)
 
-# REFDATA 
+# REFDATA
 # Checking if there are several ftp url
 if (any(grepl(pattern = ",", x = Config$Server$urlref))) urlref = unlist(strsplit(gsub(pattern = " ","",x = Config$Server$urlref), split = ",")  ) else urlref = gsub(pattern = " ","",x = Config$Server$urlref)
 # Setting REFDATA
@@ -363,10 +363,10 @@ rm(REFDATA, RefData)
 
 # Creating General Data
 # Checking that parameters for sensor download are complete or that they are new data
-if (DT.NULL || 
+if (DT.NULL ||
     isTRUE(Download.Sensor$DateEND.General.prev < Download.Sensor$DateEND.Ref.prev) ||
     isTRUE(Download.Sensor$DateEND.General.prev < Download.Sensor$DateEND.Influx.prev)) {
-    
+
     # getting what it would be to put sensor and reference data together to later compare with what is in DT.General
     D <- GENERAL(WDoutput            = file.path(DisqueFieldtestDir, "General_data"),
                  UserMins            = Config$Server$UserMins,
@@ -549,7 +549,7 @@ if (Inv.Forced) {
             }
         }
     }
-    
+
     ind.Invalid.out <- list(Valid.date,ind.Inval)
     # make sure that Outliers.Sens$Forced is run after Invalid, to discard outliers again and to apply invalid and outliers to DT.General
     Outliers.Sens.Forced <- TRUE
@@ -642,7 +642,7 @@ if (Outliers.Sens.Forced) {
     if (exists("return.ind.sens.out"))  ind.sens.out <- return.ind.sens.out
     # reseting return.ind.sens.out
     if (exists("return.ind.sens.out")) rm(return.ind.sens.out)
-    
+
     # Force conversion of sensors
     Conv.Forced <- TRUE
 }
@@ -794,18 +794,18 @@ if (Conv.Forced || Cal.Forced) {
             # initial Calibration with values in input[[paste0("Cal",j)]])) provided that "Method of Prediction" is "Prediction with previous calibration"
             for (k in seq_along(list.name.sensor)) {
                 if (Config$sens2ref$Cal.Line[k] == "Prediction with previous calibration") {
-                    if (nchar( Config$sens2ref$Cal.func[k]) > 0) { 
+                    if (nchar(Config$sens2ref$Cal.func[k]) > 0) {
                         # reading file
                         name.Model.i <- file.path(DisqueFieldtestDir,"Models",
                                                   paste0(ASE_name,"__",list.name.sensor[k],"__",Config$sens2ref$Cal.func[k]))
-                        if (file.exists(name.Model.i)) { 
+                        if (file.exists(name.Model.i)) {
                             Model.i <- load_obj(name.Model.i)
                             # sensor gas in volt or nA or Count
                             nameGasVolt <- paste0(list.name.sensor[k],"_volt")
                             # modelled sensor gas
                             nameGasMod  <- paste0(list.gas.sensor[k],"_modelled")
                             # Detecting the model type of the selected calibration model
-                            Mod_type <- Models[grep(pattern = paste0("_",strsplit(name.Model.i, split = "__")[[1]][4],"_"), 
+                            Mod_type <- Models[grep(pattern = paste0("_",strsplit(name.Model.i, split = "__")[[1]][4],"_"),
                                                     x = paste0("_",Models,"_"))]
                             # Preparing the matrix of covariates
                             # Removing na for nameGasMod for nameGasVolt missing
