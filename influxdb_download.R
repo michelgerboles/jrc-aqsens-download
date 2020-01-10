@@ -30,35 +30,35 @@ DisqueFieldtestDir <- file.path(DirShiny, ASE_name)
 if (!dir.exists(DisqueFieldtestDir)) dir.create(DisqueFieldtestDir, showWarnings = TRUE, recursive = TRUE, mode = "0777")
 
 #  1.c Create file system structure.for new AirSensEUR boxes
-if (!file.exists(file.path(DirShiny, ASE_name))) {
-    
-    # Check directories existence or create , create log file
-    if (ASE_name != "") {
-        # Creating the the working directory of the AirSensEUR box
-        if (!dir.exists(DisqueFieldtestDir)) dir.create(DisqueFieldtestDir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
-        # Creating File structure
-        List.Dirs <- c("Calibration","Drift","Estimated_coef","General_data","Models","Modelled_gas","Outliers","scriptsLog",
-                       "SensorData","Retrieved_plots","Statistics","Verification_plots", "MarkDown")
-        for (i in List.Dirs) {
-            if (!dir.exists(file.path(DisqueFieldtestDir, i))) {
-                dir.create(file.path(DisqueFieldtestDir, i), showWarnings = TRUE, recursive = TRUE, mode = "0777")
-            } else cat(paste0("Create.New] INFO Dir. already exists: ", file.path(DisqueFieldtestDir,i)), sep = "\n")
-        }
-        # Populating the configuration information, copy  old_ASE_name as new ASE_name
-        file.copy(from = Config_Files, to = paste0("ASEconfig", ASE_name,".R"), overwrite = TRUE, copy.mode = TRUE, copy.date = FALSE)
-        # Populating the configuration intormation
-        # cfg and effect files
-        Old_General_dir <- file.path(DisqueFieldtest, old_ASE_name , "General_data")
-        New_General_dir <- file.path(DisqueFieldtestDir            , "General_data")
-        cfg_Files       <- list.files(path = Old_General_dir, pattern = ".cfg")
-        for (i in cfg_Files) {
-            cat(paste0("[shiny, Create.New] INFO, copying ", gsub(pattern = old_ASE_name, replacement = ASE_name, i), " at ", New_General_dir), sep = "\n")
-            file.copy(from = file.path(Old_General_dir,i),
-                      to   = file.path(New_General_dir, gsub(pattern = old_ASE_name, replacement = ASE_name, i)),
-                      overwrite = TRUE, copy.mode = TRUE, copy.date = FALSE)
-        }
-    }
-}
+# if (!file.exists(file.path(DirShiny, ASE_name))) {
+#
+#     # Check directories existence or create , create log file
+#     if (ASE_name != "") {
+#         # Creating the the working directory of the AirSensEUR box
+#         if (!dir.exists(DisqueFieldtestDir)) dir.create(DisqueFieldtestDir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
+#         # Creating File structure
+#         List.Dirs <- c("Calibration","Drift","Estimated_coef","General_data","Models","Modelled_gas","Outliers","scriptsLog",
+#                        "SensorData","Retrieved_plots","Statistics","Verification_plots", "MarkDown")
+#         for (i in List.Dirs) {
+#             if (!dir.exists(file.path(DisqueFieldtestDir, i))) {
+#                 dir.create(file.path(DisqueFieldtestDir, i), showWarnings = TRUE, recursive = TRUE, mode = "0777")
+#             } else cat(paste0("Create.New] INFO Dir. already exists: ", file.path(DisqueFieldtestDir,i)), sep = "\n")
+#         }
+#         # Populating the configuration information, copy  old_ASE_name as new ASE_name
+#         file.copy(from = Config_Files, to = paste0("ASEconfig", ASE_name,".R"), overwrite = TRUE, copy.mode = TRUE, copy.date = FALSE)
+#         # Populating the configuration intormation
+#         # cfg and effect files
+#         Old_General_dir <- file.path(DisqueFieldtest, old_ASE_name , "General_data")
+#         New_General_dir <- file.path(DisqueFieldtestDir            , "General_data")
+#         cfg_Files       <- list.files(path = Old_General_dir, pattern = ".cfg")
+#         for (i in cfg_Files) {
+#             cat(paste0("[shiny, Create.New] INFO, copying ", gsub(pattern = old_ASE_name, replacement = ASE_name, i), " at ", New_General_dir), sep = "\n")
+#             file.copy(from = file.path(Old_General_dir,i),
+#                       to   = file.path(New_General_dir, gsub(pattern = old_ASE_name, replacement = ASE_name, i)),
+#                       overwrite = TRUE, copy.mode = TRUE, copy.date = FALSE)
+#         }
+#     }
+# }
 
 # Defining Initial values ----
 # unnecessary?
@@ -315,40 +315,40 @@ if (Download.Sensor$ExistFil.data.Ref) {
     }
 }
 # Set Down.Ref to FALSE if you do not want to download reference data
-REFDATA <- REF(DownloadSensor     = Download.Sensor,
-               AirSensEur.name    = Config$Server$AirSensEur.name,
-               DisqueFieldtestDir = DisqueFieldtestDir,
-               UserMins           = Config$Server$UserMins,
-               Down.Ref           = TRUE,
-               ref.tzone          = Config$Server$ref.tzone,
-               InfluxData         = Influx,
-               SOSData            = Sos,
-               Reference.name     = Config$Server$Reference.name,
-               urlref             = urlref,
-               sens2ref           = Config$all[["sens2ref"]],
-               FTPMode            = Config$Server$FTPMode,
-               Ref.SOS.name       = Config$Server$Ref.SOS.name,
-               RefSOSname         = Config$Server$RefSOSname,
-               RefSOSDateIN       = Ref.start,
-               RefSOSDateEND      = as.Date(format(Sys.time(), tz = Config$Server$ref.tzone)) + 1,
-               Ref__a_i_p__name         = Config$Server$Ref__a_i_p__name,
-               User__a_i_p__            = Config$Server$User__a_i_p__,
-               Pass__a_i_p__            = Config$Server$Pass__a_i_p__,
-               Ref__a_i_p__Organisation = Config$Server$Ref__a_i_p__Organisation,
-               Ref__a_i_p__Station      = Config$Server$Ref__a_i_p__Station,
-               Ref__a_i_p__Pollutants   = "Sample_air!temperature!ozone!carbon monoxide!nitrogen oxides!nitrogen dioxide!sulfur dioxide!nitrogen monoxide",
-               Ref__a_i_p__DateIN       = Ref.start,
-               Ref__a_i_p__DateEND      = as.Date(format(Sys.time(), tz = Config$Server$ref.tzone)) + 1,
-               csvFile            = Config$Server$file1,
-               csvFile.sep        = Config$Server$sep,
-               csvFile.quote      = Config$Server$quote,
-               coord.ref          = Config$Server$coord.ref,
-               Ref.Type           = Config$Server$Ref.Type,
-               RefData            = RefData,
-               shiny              = FALSE)
+# REFDATA <- REF(DownloadSensor     = Download.Sensor,
+#                AirSensEur.name    = Config$Server$AirSensEur.name,
+#                DisqueFieldtestDir = DisqueFieldtestDir,
+#                UserMins           = Config$Server$UserMins,
+#                Down.Ref           = TRUE,
+#                ref.tzone          = Config$Server$ref.tzone,
+#                InfluxData         = Influx,
+#                SOSData            = Sos,
+#                Reference.name     = Config$Server$Reference.name,
+#                urlref             = urlref,
+#                sens2ref           = Config$all[["sens2ref"]],
+#                FTPMode            = Config$Server$FTPMode,
+#                Ref.SOS.name       = Config$Server$Ref.SOS.name,
+#                RefSOSname         = Config$Server$RefSOSname,
+#                RefSOSDateIN       = Ref.start,
+#                RefSOSDateEND      = as.Date(format(Sys.time(), tz = Config$Server$ref.tzone)) + 1,
+#                Ref__a_i_p__name         = Config$Server$Ref__a_i_p__name,
+#                User__a_i_p__            = Config$Server$User__a_i_p__,
+#                Pass__a_i_p__            = Config$Server$Pass__a_i_p__,
+#                Ref__a_i_p__Organisation = Config$Server$Ref__a_i_p__Organisation,
+#                Ref__a_i_p__Station      = Config$Server$Ref__a_i_p__Station,
+#                Ref__a_i_p__Pollutants   = "Sample_air!temperature!ozone!carbon monoxide!nitrogen oxides!nitrogen dioxide!sulfur dioxide!nitrogen monoxide",
+#                Ref__a_i_p__DateIN       = Ref.start,
+#                Ref__a_i_p__DateEND      = as.Date(format(Sys.time(), tz = Config$Server$ref.tzone)) + 1,
+#                csvFile            = Config$Server$file1,
+#                csvFile.sep        = Config$Server$sep,
+#                csvFile.quote      = Config$Server$quote,
+#                coord.ref          = Config$Server$coord.ref,
+#                Ref.Type           = Config$Server$Ref.Type,
+#                RefData            = RefData,
+#                shiny              = FALSE)
 
 # updating Ref
-if (!is.null(REFDATA[[1]])) {
+if (exists("REFDATA") && !is.null(REFDATA[[1]])) {
     Ref <- REFDATA[[1]]
     Download.Sensor <- Check_Download(Influx.name = Config$Server$Dataset,
                                       WDinput     = file.path(DisqueFieldtestDir, "General_data"),
@@ -358,8 +358,10 @@ if (!is.null(REFDATA[[1]])) {
                                       InfluxData  = if (!is.null(Influx)) Influx else NA,
                                       SOSData     = if (!is.null(Sos))    Sos else NA)
     Outliers.Ref.Forced <- TRUE
-} 
-rm(REFDATA, RefData)
+    rm(REFDATA, RefData)
+} else {
+    Ref <- NULL
+}
 
 # Creating General Data
 # Checking that parameters for sensor download are complete or that they are new data
@@ -650,7 +652,7 @@ rm(Outli)
 for (i in 1:length(list.gas.sensor)) for (j in 1:Config$sens2ref$Sens.iterations[i]) assign(paste0(list.gas.sensor[i],".",j),NULL)
 
 # discard outliers of reference data
-if (Outliers.Ref.Forced) {
+if (!is.null(Ref) && Outliers.Ref.Forced) {
     # list of index of negative values
     ################################ ADD a Test to check that all reference parameters exists ######################
     ind.neg <- apply(X = DT.General[, .SD, .SDcols = list.gas.reference2use], MARGIN = 2, function(x) {which(x < 0)})
@@ -725,9 +727,9 @@ if (Outliers.Ref.Forced) {
     if (exists("return.ind.ref.out")) ind.ref.out <- return.ind.ref.out
     # reseting return.ind.ref.out
     if (exists("return.ind.ref.out")) rm(return.ind.ref.out)
+    rm(Outli)
+    for (i in 1:length(list.gas.reference2use)) for (j in 1:Config$sens2ref$Ref.iterations[i]) assign(paste0(list.gas.reference2use[i],".",j),NULL)
 }
-rm(Outli)
-for (i in 1:length(list.gas.reference2use)) for (j in 1:Config$sens2ref$Ref.iterations[i]) assign(paste0(list.gas.reference2use[i],".",j),NULL)
 
 # Conversion and calibration
 # list of possible model types
