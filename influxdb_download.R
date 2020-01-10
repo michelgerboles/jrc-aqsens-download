@@ -15,7 +15,7 @@ source("Functions4ASE.R")
 ############### at Eike: you should select here ASE_name in the way you prefer ###############################################
 # AirSensEUR name: The 1st one selected in the list of configured AirSensEURs
 Config_Files     <- list.files(path = getwd(), pattern = glob2rx("ASEconfig*.R"))[1]
-ASE_name         <- "JRC_16" # basename(Config_Files)      ; for (i in c("\\.[[:alnum:]_]+$" ,"ASEconfig")) ASE_name     <- sub(pattern = i,replacement = '', basename(as.character(ASE_name)))
+ASE_name         <- basename(Config_Files)      ; for (i in c("\\.[[:alnum:]_]+$" ,"ASEconfig")) ASE_name     <- sub(pattern = i,replacement = '', basename(as.character(ASE_name)))
 #
 # @michel: Should the final folder be <repo>/JRC_16/General_data/?
 # @michel: Should the correct list contain all the *.cfg files in this folder?
@@ -84,7 +84,7 @@ SETTIME_file       <- file.path(DisqueFieldtestDir,"General_data",paste0(ASE_nam
 Servers_file       <- file.path(DisqueFieldtestDir,"General_data",paste0(ASE_name,"_Servers.cfg"))
 
 # Configuration and reading of data
-Config <- CONFIG(DirShiny, Config_Files, shiny = FALSE)
+Config <- CONFIG(file.path(DirShiny), Config_Files, shiny = FALSE)
 # Returning a list with 4 elements see below
 # Config[["Server"]]   : server parameters
 # Config[["sens2ref"]] : cfg parameters
