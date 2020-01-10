@@ -866,9 +866,10 @@ if (Conv.Forced || Cal.Forced) {
                                 }
                             }
                         } else {
-                            my_message <- paste0(paste0("ERROR, there is no calibration function for sensors: ", list.name.sensor()[k], "\n"))
-                            cat(my_message)
+                            cat(paste0("ERROR, there is no calibration function file does not exist for sensors: ", list.name.sensor[k], "\n"))
                         }
+                    } else {
+                        cat(paste0("ERROR, there is no calibration function configured for sensors: ", list.name.sensor[k], "\n"))
                     }
                 }
             }
