@@ -1,3 +1,23 @@
+files <- list("Functions4ASE", "151016 Sensor_Toolbox", "global")
+for (file in files) {
+    file <- paste0(file, ".R")
+
+    if (file.exists(file)) {
+        unlink(file)
+        futile.logger::flog.info(paste0("Deleted previous version of '", file, "'"))
+    }
+    returnCode <- utils::download.file(
+        url = paste0("https://raw.githubusercontent.com/ec-jrc/airsenseur-calibration/master/", URLencode(file)),
+        destfile = file,
+        method = "auto"
+    )
+    futile.logger::flog.info(paste0("Downloaded latest version of '", file, "'"))
+
+    if (returnCode != 0L) {
+        stop(paste0("\n\n\t\tCould not download latest version of '", file, "'\n\n"))
+    }
+}
+
 # Set Directory of the script
 # This script shall be in the same directory as the App.R, functions4ASE.R ...
 # @michel: I down think so: we want to have our own structure which do not use
