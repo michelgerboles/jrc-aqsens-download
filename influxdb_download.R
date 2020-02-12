@@ -11,11 +11,10 @@ for (file in files) {
         destfile = file,
         method = "auto"
     )
-    futile.logger::flog.info(paste0("Downloaded latest version of '", file, "'"))
-
     if (returnCode != 0L) {
         stop(paste0("\n\n\t\tCould not download latest version of '", file, "'\n\n"))
     }
+    futile.logger::flog.info(paste0("Downloaded latest version of '", file, "'"))
 }
 
 # Set Directory of the script
