@@ -55,7 +55,9 @@ SETTIME_file       <- file.path(boxDirectory, subDirConfig, paste0(boxName,"_SET
 Servers_file       <- file.path(boxDirectory, subDirConfig, paste0(boxName,"_Servers.cfg"))
 
 # Configuration and reading of data
-Config <- CONFIG(file.path(rootWorkingDirectoy, "ASE_boxes", boxDirectory), rootWorkingDirectoy, shiny = FALSE)
+Config <- CONFIG(DisqueFieldtestDir = boxDirectory,
+                 DisqueFieldtest = rootWorkingDirectoy,
+                 shiny = FALSE)
 # Returning a list with 4 elements see below
 # Config[["Server"]]   : server parameters
 # Config[["sens2ref"]] : cfg parameters
