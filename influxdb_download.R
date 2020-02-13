@@ -850,3 +850,4 @@ if (Conv.Forced || Cal.Forced) {
         }
     } else cat("ERROR, THERE IS NO General.df or no sensor data converted to voltage or current.\n")
 }
+setwd(rootWorkingDirectoy)
