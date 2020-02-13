@@ -27,12 +27,11 @@ source("Functions4ASE.R")
 ############### at Eike: you should select here ASE_name in the way you prefer ###############################################
 # AirSensEUR name: The 1st one selected in the list of configured AirSensEURs
 ASE_name         <- "40458D" # <-- will be set by environment in the final version
-Config_Files     <- paste0(rootWorkingDirectoy, "/ASE_boxes/", ASE_name)
+DisqueFieldtestDir <- file.path(rootWorkingDirectoy, "ASE_boxes", ASE_name)
 
 # Setting the  directory from which to copy the config files
 
 # DisqueFieldtestDir     : The one of the Selected AirSensEUR
-DisqueFieldtestDir <- file.path(rootWorkingDirectoy, "ASE_boxes", ASE_name)
 
 # Defining Initial values ----
 DT.NULL    <- FALSE
@@ -57,7 +56,7 @@ SETTIME_file       <- file.path(DisqueFieldtestDir,"Configuration",paste0(ASE_na
 Servers_file       <- file.path(DisqueFieldtestDir,"Configuration",paste0(ASE_name,"_Servers.cfg"))
 
 # Configuration and reading of data
-Config <- CONFIG(file.path(rootWorkingDirectoy, "ASE_boxes", Config_Files), rootWorkingDirectoy, shiny = FALSE)
+Config <- CONFIG(file.path(rootWorkingDirectoy, "ASE_boxes", DisqueFieldtestDir), rootWorkingDirectoy, shiny = FALSE)
 # Returning a list with 4 elements see below
 # Config[["Server"]]   : server parameters
 # Config[["sens2ref"]] : cfg parameters
