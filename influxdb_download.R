@@ -16,7 +16,6 @@ for (file in files) {
     }
     futile.logger::flog.info(paste0("Downloaded latest version of '", file, "'"))
 }
-rm(files)
 library(raster)
 rootWorkingDirectoy <- "/home/rstudio/aqsens/jrc-aqsens-download"
 setwd(rootWorkingDirectoy)
@@ -850,4 +849,14 @@ if (Conv.Forced || Cal.Forced) {
         }
     } else cat("ERROR, THERE IS NO General.df or no sensor data converted to voltage or current.\n")
 }
+# this clean-up loop is just for devlopment. No need to migrate to airsenseurimporter
+files <- list("Functions4ASE", "151016 Sensor_Toolbox", "global")
+for (file in files) {
+    file <- paste0(file, ".R")
+    if (file.exists(file)) {
+        unlink(file)
+        futile.logger::flog.info(paste0("Deleted previous version of '", file, "'"))
+    }
+}
+rm(files)
 setwd(rootWorkingDirectoy)
