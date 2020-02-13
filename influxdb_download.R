@@ -24,10 +24,10 @@ setwd(rootWorkingDirectoy)
 source("global.R")
 source("Functions4ASE.R")
 
-############### at Eike: you should select here ASE_name in the way you prefer ###############################################
+############### at Eike: you should select here boxName in the way you prefer ###############################################
 # AirSensEUR name: The 1st one selected in the list of configured AirSensEURs
-ASE_name         <- "40458D" # <-- will be set by environment in the final version
-DisqueFieldtestDir <- file.path(rootWorkingDirectoy, "ASE_boxes", ASE_name)
+boxName         <- "40458D" # <-- will be set by environment in the final version
+DisqueFieldtestDir <- file.path(rootWorkingDirectoy, "ASE_boxes", boxName)
 
 # Setting the  directory from which to copy the config files
 
@@ -51,9 +51,9 @@ ind.Invalid.file        <- file.path(DisqueFieldtestDir, "General_data" , "ind_I
 ind.sens.out.file       <- file.path(DisqueFieldtestDir, "General_data" , "ind_sens_out.RDS")
 ind.ref.out.file        <- file.path(DisqueFieldtestDir, "General_data" , "ind_ref_out.RDS")
 # cfg_file     : The cfg file  of the Selected AirSensEUR "
-cfg_file           <- file.path(DisqueFieldtestDir,"Configuration",paste0(ASE_name,".cfg"))
-SETTIME_file       <- file.path(DisqueFieldtestDir,"Configuration",paste0(ASE_name,"_SETTIME.cfg"))
-Servers_file       <- file.path(DisqueFieldtestDir,"Configuration",paste0(ASE_name,"_Servers.cfg"))
+cfg_file           <- file.path(DisqueFieldtestDir,"Configuration",paste0(boxName,".cfg"))
+SETTIME_file       <- file.path(DisqueFieldtestDir,"Configuration",paste0(boxName,"_SETTIME.cfg"))
+Servers_file       <- file.path(DisqueFieldtestDir,"Configuration",paste0(boxName,"_Servers.cfg"))
 
 # Configuration and reading of data
 Config <- CONFIG(file.path(rootWorkingDirectoy, "ASE_boxes", DisqueFieldtestDir), rootWorkingDirectoy, shiny = FALSE)
@@ -212,7 +212,7 @@ Cal.Forced  <- FALSE
 setwd(DisqueFieldtestDir)
 
 # Reactive i.sensors Once AirSensEUR is Selected
-# Returning the indexes of valid sensors in ASE_name.cfg taking into account NAs
+# Returning the indexes of valid sensors in boxName.cfg taking into account NAs
 # avoid na and names of sensor in the checmical shield
 i.sensors          <- which(!is.na(Set.Time$name.gas) & Set.Time$name.gas %in% Config$sens2ref$name.gas)
 list.gas.sensor       <- Config[["sens2ref"]]$gas.sensor[!is.na(Config[["sens2ref"]]$gas.sensor) &
@@ -476,7 +476,7 @@ if (Inv.Forced) {
     if (!is.null(DT.General)) {
         # reading the files with period of valid data
         for (i in seq_along(list.name.sensor)) {
-            nameFile <- file.path(DisqueFieldtestDir,"General_data",paste0(ASE_name,"_Valid_",list.name.sensor[i],".cfg"))
+            nameFile <- file.path(DisqueFieldtestDir,"General_data",paste0(boxName,"_Valid_",list.name.sensor[i],".cfg"))
             if (file.exists(nameFile)) {
                 assign(paste0("Valid_",list.name.sensor[i]), read.table(file = nameFile, header = TRUE, row.names = NULL, comment.char = "#", stringsAsFactors = FALSE))
             } else {
@@ -771,7 +771,7 @@ if (Conv.Forced || Cal.Forced) {
                     if (nchar(Config$sens2ref$Cal.func[k]) > 0) {
                         # reading file
                         name.Model.i <- file.path(DisqueFieldtestDir,"Models",
-                                                  paste0(ASE_name,"__",list.name.sensor[k],"__",Config$sens2ref$Cal.func[k]))
+                                                  paste0(boxName,"__",list.name.sensor[k],"__",Config$sens2ref$Cal.func[k]))
                         if (file.exists(name.Model.i)) {
                             Model.i <- load_obj(name.Model.i)
                             # sensor gas in volt or nA or Count
