@@ -17,13 +17,6 @@ for (file in files) {
     futile.logger::flog.info(paste0("Downloaded latest version of '", file, "'"))
 }
 
-# Set Directory of the script
-# This script shall be in the same directory as the App.R, functions4ASE.R ...
-# @michel: I down think so: we want to have our own structure which do not use
-#          any gui (shiny + x) libraries and code. The process will be run on
-#          a headless server as one-shoot process which mounts the data and
-#          configuration files.
-#
 DisqueFieldtest <- getwd()
 DirShiny        <- DisqueFieldtest
 
@@ -35,11 +28,7 @@ source("Functions4ASE.R")
 # AirSensEUR name: The 1st one selected in the list of configured AirSensEURs
 Config_Files     <- list.dirs(path = paste0(getwd(), "/ASE_boxes"), recursive = FALSE, full.names = FALSE)[1]
 ASE_name         <- basename(Config_Files)      ; for (i in c("\\.[[:alnum:]_]+$" ,"ASEconfig")) ASE_name     <- sub(pattern = i,replacement = '', basename(as.character(ASE_name)))
-#
-# @michel: Should the final folder be <repo>/JRC_16/General_data/?
-# @michel: Should the correct list contain all the *.cfg files in this folder?
-# @michel: The station variable should be configured outside out import script
-#
+
 # Setting the  directory from which to copy the config files
 old_Config_Files <- list.files(path = getwd(), pattern = glob2rx("ASEconfig*.R"))[12]
 old_ASE_name     <- basename(old_Config_Files)  ; for (i in c("\\.[[:alnum:]_]+$" ,"ASEconfig")) old_ASE_name <- sub(pattern = i,replacement = '', basename(as.character(old_ASE_name)))
@@ -48,39 +37,7 @@ old_ASE_name     <- basename(old_Config_Files)  ; for (i in c("\\.[[:alnum:]_]+$
 DisqueFieldtestDir <- file.path(DirShiny, ASE_name)
 if (!dir.exists(DisqueFieldtestDir)) dir.create(DisqueFieldtestDir, showWarnings = TRUE, recursive = TRUE, mode = "0777")
 
-#  1.c Create file system structure.for new AirSensEUR boxes
-# if (!file.exists(file.path(DirShiny, ASE_name))) {
-#
-#     # Check directories existence or create , create log file
-#     if (ASE_name != "") {
-#         # Creating the the working directory of the AirSensEUR box
-#         if (!dir.exists(DisqueFieldtestDir)) dir.create(DisqueFieldtestDir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
-#         # Creating File structure
-#         List.Dirs <- c("Calibration","Drift","Estimated_coef","General_data","Models","Modelled_gas","Outliers","scriptsLog",
-#                        "SensorData","Retrieved_plots","Statistics","Verification_plots", "MarkDown")
-#         for (i in List.Dirs) {
-#             if (!dir.exists(file.path(DisqueFieldtestDir, i))) {
-#                 dir.create(file.path(DisqueFieldtestDir, i), showWarnings = TRUE, recursive = TRUE, mode = "0777")
-#             } else cat(paste0("Create.New] INFO Dir. already exists: ", file.path(DisqueFieldtestDir,i)), sep = "\n")
-#         }
-#         # Populating the configuration information, copy  old_ASE_name as new ASE_name
-#         file.copy(from = Config_Files, to = paste0("ASEconfig", ASE_name,".R"), overwrite = TRUE, copy.mode = TRUE, copy.date = FALSE)
-#         # Populating the configuration intormation
-#         # cfg and effect files
-#         Old_General_dir <- file.path(DisqueFieldtest, old_ASE_name , "General_data")
-#         New_General_dir <- file.path(DisqueFieldtestDir            , "General_data")
-#         cfg_Files       <- list.files(path = Old_General_dir, pattern = ".cfg")
-#         for (i in cfg_Files) {
-#             cat(paste0("[shiny, Create.New] INFO, copying ", gsub(pattern = old_ASE_name, replacement = ASE_name, i), " at ", New_General_dir), sep = "\n")
-#             file.copy(from = file.path(Old_General_dir,i),
-#                       to   = file.path(New_General_dir, gsub(pattern = old_ASE_name, replacement = ASE_name, i)),
-#                       overwrite = TRUE, copy.mode = TRUE, copy.date = FALSE)
-#         }
-#     }
-# }
-
 # Defining Initial values ----
-# unnecessary?
 DT.NULL    <- FALSE
 DT.General <- NULL
 Influx     <- NULL
