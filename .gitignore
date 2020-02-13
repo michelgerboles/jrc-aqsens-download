@@ -1,8 +1,9 @@
+*.Rdata
+*.Rproj*
 *.csv
 *.db
 *.old
-*.Rdata
-*.Rproj*
-global.R
-Functions4ASE.R
 151016 Sensor_Toolbox.R
+ASE_boxes/**/General_data/*.RDS
+Functions4ASE.R
+global.R
