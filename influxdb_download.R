@@ -26,8 +26,8 @@ source("Functions4ASE.R")
 
 ############### at Eike: you should select here ASE_name in the way you prefer ###############################################
 # AirSensEUR name: The 1st one selected in the list of configured AirSensEURs
-Config_Files     <- list.dirs(path = paste0(getwd(), "/ASE_boxes"), recursive = FALSE, full.names = FALSE)[1]
-ASE_name         <- basename(Config_Files)      ; for (i in c("\\.[[:alnum:]_]+$" ,"ASEconfig")) ASE_name     <- sub(pattern = i,replacement = '', basename(as.character(ASE_name)))
+ASE_name         <- "40458D" # <-- will be set by environment in the final version
+Config_Files     <- paste0(rootWorkingDirectoy, "/ASE_boxes/", ASE_name)
 
 # Setting the  directory from which to copy the config files
 
