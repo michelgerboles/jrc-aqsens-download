@@ -385,8 +385,8 @@ if (DT.NULL ||
                                           InfluxData  = if (!is.null(Influx)) Influx else NA,
                                           SOSData     = if (!is.null(Sos))    Sos else NA)
     }
+    rm(D)
 }
-rm(D)
 
 # Running filtering if needed
 # Flagging the sensor data for warming time
@@ -430,8 +430,8 @@ if (Warm.Forced) {
     ind.warm.out <- return.ind.warm
     # Setting TRh.Forced to TRUE to be sure that it is done before ind.Sens
     TRh.Forced <- TRUE
+    rm(return.ind.warm, ind)
 }
-rm(return.ind.warm, ind)
 
 # Flagging the sensor data for temperature and humidity outside interval of tolerance
 # Output:                : list of NAs for discarded temperature and humidity with as many elements as in list.gas.sensor
@@ -466,8 +466,8 @@ if (TRh.Forced) {
     ind.TRh.out <- list(ind.TRh = return.ind.TRh, T.min = return.ind.T.min, T.max = return.ind.T.max, Rh.min = return.ind.Rh.min, Rh.max = return.ind.Rh.max)
     # Setting Invalid$Forced to True to be sure that it is carried out before ind.sens
     Inv.Forced <- TRUE
+    rm(return.ind.TRh, return.ind.T.min, return.ind.T.max, return.ind.Rh.min, return.ind.Rh.max, T.min,T.max,Rh.min,Rh.max)
 }
-rm(return.ind.TRh, return.ind.T.min, return.ind.T.max, return.ind.Rh.min, return.ind.Rh.max, T.min,T.max,Rh.min,Rh.max)
 
 # output: a list of 4 character vectors, corresponding to sensors with row index of DT.General corresponding to Invalid sensor data,
 #       the names of the 4 elements are the ones of list.gas.sensor   in the same order
@@ -530,8 +530,8 @@ if (Inv.Forced) {
     # make sure that Outliers.Sens$Forced is run after Invalid, to discard outliers again and to apply invalid and outliers to DT.General
     Outliers.Sens.Forced <- TRUE
     rm(Valid.date,ind.Inval)
+    rm(Valid)
 }
-rm(Valid)
 for (i in list.name.sensor) assign(paste0("Valid_",i),NULL)
 
 # discard outliers of sensors
@@ -621,8 +621,8 @@ if (Outliers.Sens.Forced) {
 
     # Force conversion of sensors
     Conv.Forced <- TRUE
+    rm(Outli)
 }
-rm(Outli)
 for (i in 1:length(list.gas.sensor)) for (j in 1:Config$sens2ref$Sens.iterations[i]) assign(paste0(list.gas.sensor[i],".",j),NULL)
 
 # discard outliers of reference data
