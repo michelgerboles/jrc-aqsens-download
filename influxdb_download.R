@@ -17,7 +17,8 @@ for (file in files) {
     futile.logger::flog.info(paste0("Downloaded latest version of '", file, "'"))
 }
 
-DisqueFieldtest <- getwd()
+DisqueFieldtest <- "/home/rstudio/aqsens/jrc-aqsens-download"
+setwd(DisqueFieldtest)
 DirShiny        <- DisqueFieldtest
 
 #   1.d Loading packages (global.R)
@@ -32,8 +33,7 @@ ASE_name         <- basename(Config_Files)      ; for (i in c("\\.[[:alnum:]_]+$
 # Setting the  directory from which to copy the config files
 
 # DisqueFieldtestDir     : The one of the Selected AirSensEUR
-DisqueFieldtestDir <- file.path(DirShiny, ASE_name)
-if (!dir.exists(DisqueFieldtestDir)) dir.create(DisqueFieldtestDir, showWarnings = TRUE, recursive = TRUE, mode = "0777")
+DisqueFieldtestDir <- file.path(DirShiny, "ASE_boxes", ASE_name)
 
 # Defining Initial values ----
 DT.NULL    <- FALSE
@@ -53,12 +53,12 @@ ind.Invalid.file        <- file.path(DisqueFieldtestDir, "General_data" , "ind_I
 ind.sens.out.file       <- file.path(DisqueFieldtestDir, "General_data" , "ind_sens_out.RDS")
 ind.ref.out.file        <- file.path(DisqueFieldtestDir, "General_data" , "ind_ref_out.RDS")
 # cfg_file     : The cfg file  of the Selected AirSensEUR "
-cfg_file           <- file.path(DisqueFieldtestDir,"General_data",paste0(ASE_name,".cfg"))
-SETTIME_file       <- file.path(DisqueFieldtestDir,"General_data",paste0(ASE_name,"_SETTIME.cfg"))
-Servers_file       <- file.path(DisqueFieldtestDir,"General_data",paste0(ASE_name,"_Servers.cfg"))
+cfg_file           <- file.path(DisqueFieldtestDir,"Configuration",paste0(ASE_name,".cfg"))
+SETTIME_file       <- file.path(DisqueFieldtestDir,"Configuration",paste0(ASE_name,"_SETTIME.cfg"))
+Servers_file       <- file.path(DisqueFieldtestDir,"Configuration",paste0(ASE_name,"_Servers.cfg"))
 
 # Configuration and reading of data
-Config <- CONFIG(file.path(DirShiny), Config_Files, shiny = FALSE)
+Config <- CONFIG(file.path(DirShiny, "ASE_boxes", Config_Files), DirShiny, shiny = FALSE)
 # Returning a list with 4 elements see below
 # Config[["Server"]]   : server parameters
 # Config[["sens2ref"]] : cfg parameters
