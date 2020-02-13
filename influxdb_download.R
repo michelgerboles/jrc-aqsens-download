@@ -19,7 +19,7 @@ for (file in files) {
 
 DisqueFieldtest <- "/home/rstudio/aqsens/jrc-aqsens-download"
 setwd(DisqueFieldtest)
-DirShiny        <- DisqueFieldtest
+rootWorkingDirectoy        <- DisqueFieldtest
 
 #   1.d Loading packages (global.R)
 source("global.R")
@@ -33,7 +33,7 @@ ASE_name         <- basename(Config_Files)      ; for (i in c("\\.[[:alnum:]_]+$
 # Setting the  directory from which to copy the config files
 
 # DisqueFieldtestDir     : The one of the Selected AirSensEUR
-DisqueFieldtestDir <- file.path(DirShiny, "ASE_boxes", ASE_name)
+DisqueFieldtestDir <- file.path(rootWorkingDirectoy, "ASE_boxes", ASE_name)
 
 # Defining Initial values ----
 DT.NULL    <- FALSE
@@ -58,7 +58,7 @@ SETTIME_file       <- file.path(DisqueFieldtestDir,"Configuration",paste0(ASE_na
 Servers_file       <- file.path(DisqueFieldtestDir,"Configuration",paste0(ASE_name,"_Servers.cfg"))
 
 # Configuration and reading of data
-Config <- CONFIG(file.path(DirShiny, "ASE_boxes", Config_Files), DirShiny, shiny = FALSE)
+Config <- CONFIG(file.path(rootWorkingDirectoy, "ASE_boxes", Config_Files), rootWorkingDirectoy, shiny = FALSE)
 # Returning a list with 4 elements see below
 # Config[["Server"]]   : server parameters
 # Config[["sens2ref"]] : cfg parameters
@@ -709,7 +709,7 @@ if (!is.null(Ref) && Outliers.Ref.Forced) {
 # list of possible model types
 Models <- c("Linear", "Linear.Robust","MultiLinear", "exp_kT", "exp_kK", "T_power", "K_power", "RH_Hysteresis","gam", "Quadratic", "Cubic", "Michelis", "Sigmoid")
 Shield <- if (!is.null(Config$Server$asc.File) & length(Config$Server$asc.File) != 0) {
-    ASEPanel04Read(ASEPanel04File = file.path(DirShiny, "Shield_Files", Config$Server$asc.File))
+    ASEPanel04Read(ASEPanel04File = file.path(rootWorkingDirectoy, "Shield_Files", Config$Server$asc.File))
 } else return("ERROR, Config file of chemical shield not existing.\n")
 Calib_data <- data.frame(
     name.gas           = list.name.gas,
