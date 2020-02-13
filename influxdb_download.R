@@ -17,7 +17,7 @@ for (file in files) {
     futile.logger::flog.info(paste0("Downloaded latest version of '", file, "'"))
 }
 rm(files)
-
+library(raster)
 rootWorkingDirectoy <- "/home/rstudio/aqsens/jrc-aqsens-download"
 setwd(rootWorkingDirectoy)
 
