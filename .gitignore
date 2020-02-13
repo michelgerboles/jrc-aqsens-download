@@ -4,6 +4,6 @@
 *.db
 *.old
 151016 Sensor_Toolbox.R
-ASE_boxes/**/General_data/*.RDS
+!ASE_boxes/**/General_data/*.RDS
 Functions4ASE.R
 global.R
