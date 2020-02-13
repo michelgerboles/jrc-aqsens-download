@@ -357,7 +357,7 @@ if (DT.NULL ||
     if (is.null(DT.General) || nrow(DT.General) == 0 ||
         (!is.null(DT.General) && !isTRUE(all.equal(D[,.SD, .SDcols = intersect(names(D),names(DT.General))],
                                                    DT.General[,.SD, .SDcols = intersect(names(D),names(DT.General))],
-                                                   , check.attributes = FALSE)))) {
+                                                   check.attributes = FALSE)))) {
         save.General.df <- TRUE
         DT.General <- D
     }
