@@ -30,8 +30,6 @@ Config_Files     <- list.dirs(path = paste0(getwd(), "/ASE_boxes"), recursive = 
 ASE_name         <- basename(Config_Files)      ; for (i in c("\\.[[:alnum:]_]+$" ,"ASEconfig")) ASE_name     <- sub(pattern = i,replacement = '', basename(as.character(ASE_name)))
 
 # Setting the  directory from which to copy the config files
-old_Config_Files <- list.files(path = getwd(), pattern = glob2rx("ASEconfig*.R"))[12]
-old_ASE_name     <- basename(old_Config_Files)  ; for (i in c("\\.[[:alnum:]_]+$" ,"ASEconfig")) old_ASE_name <- sub(pattern = i,replacement = '', basename(as.character(old_ASE_name)))
 
 # DisqueFieldtestDir     : The one of the Selected AirSensEUR
 DisqueFieldtestDir <- file.path(DirShiny, ASE_name)
