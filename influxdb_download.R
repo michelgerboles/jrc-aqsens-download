@@ -28,7 +28,7 @@ source("Functions4ASE.R")
 ############### at Eike: you should select here boxName in the way you prefer ###############################################
 # AirSensEUR name: The 1st one selected in the list of configured AirSensEURs
 boxName      <- "40458D" # <-- will be set by environment in the final version
-boxDirectory <- file.path(rootWorkingDirectoy, "ASE_boxes", boxName)
+boxDirectory <- file.path(rootWorkingDirectoy, "ASE_Boxes", boxName)
 subDirData   <- "General_data"
 subDirConfig <- "Configuration"
 subDirModels <- "Models"
