@@ -17,9 +17,8 @@ for (file in files) {
     futile.logger::flog.info(paste0("Downloaded latest version of '", file, "'"))
 }
 
-DisqueFieldtest <- "/home/rstudio/aqsens/jrc-aqsens-download"
-setwd(DisqueFieldtest)
-rootWorkingDirectoy        <- DisqueFieldtest
+rootWorkingDirectoy <- "/home/rstudio/aqsens/jrc-aqsens-download"
+setwd(rootWorkingDirectoy)
 
 #   1.d Loading packages (global.R)
 source("global.R")
