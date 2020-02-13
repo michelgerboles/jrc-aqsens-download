@@ -27,11 +27,7 @@ source("Functions4ASE.R")
 ############### at Eike: you should select here boxName in the way you prefer ###############################################
 # AirSensEUR name: The 1st one selected in the list of configured AirSensEURs
 boxName         <- "40458D" # <-- will be set by environment in the final version
-DisqueFieldtestDir <- file.path(rootWorkingDirectoy, "ASE_boxes", boxName)
-
-# Setting the  directory from which to copy the config files
-
-# DisqueFieldtestDir     : The one of the Selected AirSensEUR
+boxDirectory <- file.path(rootWorkingDirectoy, "ASE_boxes", boxName)
 
 # Defining Initial values ----
 DT.NULL    <- FALSE
@@ -41,22 +37,22 @@ Sos        <- NULL
 Ref        <- NULL
 
 
-General.file            <- file.path(DisqueFieldtestDir, "General_data" , "General.csv")
-InfluxData.file         <- file.path(DisqueFieldtestDir, "General_data" , "InfluxData.csv")
-SOSData.file            <- file.path(DisqueFieldtestDir, "General_data" , "SOSData.csv")
-RefData.file            <- file.path(DisqueFieldtestDir, "General_data" , "RefData.csv")
-ind.warm.file           <- file.path(DisqueFieldtestDir, "General_data" , "ind_warm.RDS")
-ind.TRh.file            <- file.path(DisqueFieldtestDir, "General_data" , "ind_TRh.RDS"  )
-ind.Invalid.file        <- file.path(DisqueFieldtestDir, "General_data" , "ind_Invalid.RDS")
-ind.sens.out.file       <- file.path(DisqueFieldtestDir, "General_data" , "ind_sens_out.RDS")
-ind.ref.out.file        <- file.path(DisqueFieldtestDir, "General_data" , "ind_ref_out.RDS")
+General.file            <- file.path(boxDirectory, "General_data" , "General.csv")
+InfluxData.file         <- file.path(boxDirectory, "General_data" , "InfluxData.csv")
+SOSData.file            <- file.path(boxDirectory, "General_data" , "SOSData.csv")
+RefData.file            <- file.path(boxDirectory, "General_data" , "RefData.csv")
+ind.warm.file           <- file.path(boxDirectory, "General_data" , "ind_warm.RDS")
+ind.TRh.file            <- file.path(boxDirectory, "General_data" , "ind_TRh.RDS"  )
+ind.Invalid.file        <- file.path(boxDirectory, "General_data" , "ind_Invalid.RDS")
+ind.sens.out.file       <- file.path(boxDirectory, "General_data" , "ind_sens_out.RDS")
+ind.ref.out.file        <- file.path(boxDirectory, "General_data" , "ind_ref_out.RDS")
 # cfg_file     : The cfg file  of the Selected AirSensEUR "
-cfg_file           <- file.path(DisqueFieldtestDir,"Configuration",paste0(boxName,".cfg"))
-SETTIME_file       <- file.path(DisqueFieldtestDir,"Configuration",paste0(boxName,"_SETTIME.cfg"))
-Servers_file       <- file.path(DisqueFieldtestDir,"Configuration",paste0(boxName,"_Servers.cfg"))
+cfg_file           <- file.path(boxDirectory,"Configuration",paste0(boxName,".cfg"))
+SETTIME_file       <- file.path(boxDirectory,"Configuration",paste0(boxName,"_SETTIME.cfg"))
+Servers_file       <- file.path(boxDirectory,"Configuration",paste0(boxName,"_Servers.cfg"))
 
 # Configuration and reading of data
-Config <- CONFIG(file.path(rootWorkingDirectoy, "ASE_boxes", DisqueFieldtestDir), rootWorkingDirectoy, shiny = FALSE)
+Config <- CONFIG(file.path(rootWorkingDirectoy, "ASE_boxes", boxDirectory), rootWorkingDirectoy, shiny = FALSE)
 # Returning a list with 4 elements see below
 # Config[["Server"]]   : server parameters
 # Config[["sens2ref"]] : cfg parameters
@@ -157,14 +153,14 @@ if (file.exists(General.file)) {
 }
 # Initial DownloadSensor
 Download.Sensor <- Check_Download(Influx.name = Config$Server$Dataset,
-                                  WDinput     = file.path(DisqueFieldtestDir, "General_data"),
+                                  WDinput     = file.path(boxDirectory, "General_data"),
                                   UserMins    = if (!is.null(Config$Server$UserMins)) Config$Server$UserMins else Config$Server$UserMins,
                                   General.df  = if (!is.null(DT.General))  DT.General else NA,
                                   RefData     = if (!is.null(Ref))    Ref else NA,
                                   InfluxData  = if (!is.null(Influx)) Influx else NA,
                                   SOSData     = if (!is.null(Sos))    Sos else NA)
 # Initial SetTime
-Set.Time        <- SETTIME(DisqueFieldtestDir = DisqueFieldtestDir,
+Set.Time        <- SETTIME(DisqueFieldtestDir = boxDirectory,
                            General.t.Valid    = DT.General,
                            Influx.TZ          = Config[["Server"]]$Influx.TZ,
                            SOS.TZ             = Config[["Server"]]$SOS.TZ,
@@ -209,7 +205,7 @@ Conv.Forced <- FALSE
 Cal.Forced  <- FALSE
 
 # setting the current directory to the root of the file system with the name of the AirSensEUR
-setwd(DisqueFieldtestDir)
+setwd(boxDirectory)
 
 # Reactive i.sensors Once AirSensEUR is Selected
 # Returning the indexes of valid sensors in boxName.cfg taking into account NAs
@@ -240,7 +236,7 @@ list.gas.reference <- Config[["sens2ref"]]$gas.reference[!is.na(Config[["sens2re
 # InfluxData          <- INFLUX[[1]]
 if (!is.null(Influx)) InfluxData <- Influx[] else InfluxData <- NA_real_
 INFLUX <- INFLUXDB(
-    WDoutput        = file.path(DisqueFieldtestDir,"General_data"),
+    WDoutput        = file.path(boxDirectory,"General_data"),
     DownloadSensor  = Download.Sensor,
     UserMins        = Config$Server$UserMins,
     PROXY           = Config$Server$PROXY,
@@ -256,8 +252,8 @@ INFLUX <- INFLUXDB(
     Db              = Config$Server$Db,
     Dataset         = Config$Server$Dataset,
     Influx.TZ       = Config$Server$Influx.TZ,
-    name.SQLite     = file.path(DisqueFieldtestDir,"General_data","airsenseur.db"),
-    name.SQLite.old = file.path(DisqueFieldtestDir,"General_data","airsenseur_old.db"),
+    name.SQLite     = file.path(boxDirectory,"General_data","airsenseur.db"),
+    name.SQLite.old = file.path(boxDirectory,"General_data","airsenseur_old.db"),
     sens2ref        = Config[["sens2ref"]],
     InfluxData      = InfluxData)
 Influx          <- INFLUX[[1]]
@@ -265,7 +261,7 @@ var.names.meteo <- INFLUX[[2]]
 rm(INFLUX, InfluxData)
 # updating Download.Sensor with new INflux data
 Download.Sensor <- Check_Download(Influx.name = Config$Server$Dataset,
-                                  WDinput     = file.path(DisqueFieldtestDir, "General_data"),
+                                  WDinput     = file.path(boxDirectory, "General_data"),
                                   UserMins    = if (!is.null(Config$Server$UserMins)) Config$Server$UserMins else 1,
                                   General.df  = if (!is.null(DT.General))  DT.General else NA,
                                   RefData     = if (!is.null(Ref))    Ref else NA,
@@ -289,7 +285,7 @@ if (Download.Sensor$ExistFil.data.Ref) {
 # Set Down.Ref to FALSE if you do not want to download reference data
 # REFDATA <- REF(DownloadSensor     = Download.Sensor,
 #                AirSensEur.name    = Config$Server$AirSensEur.name,
-#                DisqueFieldtestDir = DisqueFieldtestDir,
+#                DisqueFieldtestDir = boxDirectory,
 #                UserMins           = Config$Server$UserMins,
 #                Down.Ref           = TRUE,
 #                ref.tzone          = Config$Server$ref.tzone,
@@ -323,7 +319,7 @@ if (Download.Sensor$ExistFil.data.Ref) {
 if (exists("REFDATA") && !is.null(REFDATA[[1]])) {
     Ref <- REFDATA[[1]]
     Download.Sensor <- Check_Download(Influx.name = Config$Server$Dataset,
-                                      WDinput     = file.path(DisqueFieldtestDir, "General_data"),
+                                      WDinput     = file.path(boxDirectory, "General_data"),
                                       UserMins    = if (!is.null(Config$Server$UserMins)) Config$Server$UserMins else 1,
                                       General.df  = if (!is.null(DT.General))  DT.General else NA,
                                       RefData     = if (!is.null(Ref))    Ref else NA,
@@ -342,7 +338,7 @@ if (DT.NULL ||
     isTRUE(Download.Sensor$DateEND.General.prev < Download.Sensor$DateEND.Influx.prev)) {
 
     # getting what it would be to put sensor and reference data together to later compare with what is in DT.General
-    D <- GENERAL(WDoutput            = file.path(DisqueFieldtestDir, "General_data"),
+    D <- GENERAL(WDoutput            = file.path(boxDirectory, "General_data"),
                  UserMins            = Config$Server$UserMins,
                  Delay               = Config$Server$Delay,
                  RefData             = Ref,
@@ -376,7 +372,7 @@ if (DT.NULL ||
         Outliers.Sens.Forced <- TRUE
         # Updating Download.Sensor
         Download.Sensor <- Check_Download(Influx.name = Config$Server$Dataset,
-                                          WDinput     = file.path(DisqueFieldtestDir, "General_data"),
+                                          WDinput     = file.path(boxDirectory, "General_data"),
                                           UserMins    = if (!is.null(Config$Server$UserMins)) Config$Server$UserMins else 1,
                                           General.df  = if (!is.null(DT.General))  DT.General else NA,
                                           RefData     = if (!is.null(Ref))    Ref else NA,
@@ -476,7 +472,7 @@ if (Inv.Forced) {
     if (!is.null(DT.General)) {
         # reading the files with period of valid data
         for (i in seq_along(list.name.sensor)) {
-            nameFile <- file.path(DisqueFieldtestDir,"General_data",paste0(boxName,"_Valid_",list.name.sensor[i],".cfg"))
+            nameFile <- file.path(boxDirectory,"General_data",paste0(boxName,"_Valid_",list.name.sensor[i],".cfg"))
             if (file.exists(nameFile)) {
                 assign(paste0("Valid_",list.name.sensor[i]), read.table(file = nameFile, header = TRUE, row.names = NULL, comment.char = "#", stringsAsFactors = FALSE))
             } else {
@@ -770,7 +766,7 @@ if (Conv.Forced || Cal.Forced) {
                 if (Config$sens2ref$Cal.Line[k] == "Prediction with previous calibration") {
                     if (nchar(Config$sens2ref$Cal.func[k]) > 0) {
                         # reading file
-                        name.Model.i <- file.path(DisqueFieldtestDir,"Models",
+                        name.Model.i <- file.path(boxDirectory,"Models",
                                                   paste0(boxName,"__",list.name.sensor[k],"__",Config$sens2ref$Cal.func[k]))
                         if (file.exists(name.Model.i)) {
                             Model.i <- load_obj(name.Model.i)
