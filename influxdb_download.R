@@ -17,8 +17,8 @@ for (file in files) {
     futile.logger::flog.info(paste0("Downloaded latest version of '", file, "'"))
 }
 library(raster)
-rootWorkingDirectoy <- "/home/rstudio/aqsens/jrc-aqsens-download"
-setwd(rootWorkingDirectoy)
+rootWorkingDirectory <- "/home/rstudio/aqsens/jrc-aqsens-download"
+setwd(rootWorkingDirectory)
 
 #   1.d Loading packages (global.R)
 source("global.R")
@@ -27,7 +27,7 @@ source("Functions4ASE.R")
 ############### at Eike: you should select here boxName in the way you prefer ###############################################
 # AirSensEUR name: The 1st one selected in the list of configured AirSensEURs
 boxName      <- "40458D" # <-- will be set by environment in the final version
-boxDirectory <- file.path(rootWorkingDirectoy, "ASE_Boxes", boxName)
+boxDirectory <- file.path(rootWorkingDirectory, "ASE_Boxes", boxName)
 subDirData   <- "General_data"
 subDirConfig <- "Configuration"
 subDirModels <- "Models"
@@ -55,7 +55,7 @@ Servers_file       <- file.path(boxDirectory, subDirConfig, paste0(boxName,"_Ser
 
 # Configuration and reading of data
 Config <- CONFIG(DisqueFieldtestDir = boxDirectory,
-                 DisqueFieldtest = rootWorkingDirectoy,
+                 DisqueFieldtest = rootWorkingDirectory,
                  shiny = FALSE)
 # Returning a list with 4 elements see below
 # Config[["Server"]]   : server parameters
@@ -706,7 +706,7 @@ if (!is.null(Ref) && Outliers.Ref.Forced) {
 # list of possible model types
 Models <- c("Linear", "Linear.Robust","MultiLinear", "exp_kT", "exp_kK", "T_power", "K_power", "RH_Hysteresis","gam", "Quadratic", "Cubic", "Michelis", "Sigmoid")
 Shield <- if (!is.null(Config$Server$asc.File) & length(Config$Server$asc.File) != 0) {
-    ASEPanel04Read(ASEPanel04File = file.path(rootWorkingDirectoy, "Shield_Files", Config$Server$asc.File))
+    ASEPanel04Read(ASEPanel04File = file.path(rootWorkingDirectory, "Shield_Files", Config$Server$asc.File))
 } else return("ERROR, Config file of chemical shield not existing.\n")
 Calib_data <- data.frame(
     name.gas           = list.name.gas,
@@ -859,4 +859,4 @@ for (file in files) {
     }
 }
 rm(files)
-setwd(rootWorkingDirectoy)
+setwd(rootWorkingDirectory)
