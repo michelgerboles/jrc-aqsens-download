@@ -42,7 +42,6 @@ setwd(wd)
 #
 #   Clean-Up after script run
 #
-# this clean-up loop is just for devlopment. No need to migrate to airsenseurimporter
 for (file in files) {
     file <- paste0(file, ".R")
     if (file.exists(file)) {
