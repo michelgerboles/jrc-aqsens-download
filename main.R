@@ -35,6 +35,8 @@ config <- influx.getConfig(boxName = station)
 tmp <- influx.downloadAndPredict(boxName = station, boxConfig = config)
 data <- tmp$data
 cols <- unlist(c("date","altitude","latitude","longitude", as.list(config$sens2ref$gas.sensor), names(which(sapply(names(data), function(n) { endsWith(n, "_modelled")})))))
+cat("\n\n\nAvailable columns in data.table:\n")
+cat(names(data), "\n\n\n")
 data <- data[, ..cols]
 timeCfg <- tmp$timeConfig
 rm(tmp)
