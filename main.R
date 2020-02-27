@@ -25,14 +25,14 @@ for (file in files) {
 library(raster)
 source("global.R")
 source("Functions4ASE.R")
-source("influxdb_download.R")
+source("influx.R")
 #
 #   Start Downloading data and extract configuration + x
 #
 wd <- getwd()
 station <- "40458D"
-config <- influxConfig(boxName = station)
-tmp <- influxDownload(boxName = station, boxConfig = config)
+config <- influx.getConfig(boxName = station)
+tmp <- influx.downloadAndPredict(boxName = station, boxConfig = config)
 data <- tmp$data
 cols <- unlist(c("date","altitude","latitude","longitude", as.list(config$sens2ref$gas.sensor), names(which(sapply(names(data), function(n) { endsWith(n, "_modelled")})))))
 data <- data[, ..cols]

@@ -1,4 +1,4 @@
-influxConfig <- function(boxName) {
+influx.getConfig <- function(boxName) {
   rootWorkingDirectory <- getwd()
   boxDirectory         <- file.path(rootWorkingDirectory, "ASE_Boxes", boxName)
   # Configuration and reading of data
@@ -12,7 +12,7 @@ influxConfig <- function(boxName) {
                    shiny = FALSE))
 }
 
-influxDownload <- function(boxName, boxConfig) {
+influx.downloadAndPredict <- function(boxName, boxConfig) {
   rootWorkingDirectory <- getwd()
   boxDirectory         <- file.path(rootWorkingDirectory, "ASE_Boxes", boxName)
   subDirData           <- "General_data"
