@@ -1,24 +1,28 @@
-files <- list("Functions4ASE", "151016 Sensor_Toolbox", "global")
-for (file in files) {
-    file <- paste0(file, ".R")
-
-    if (file.exists(file)) {
-        unlink(file)
-        futile.logger::flog.info(paste0("Deleted previous version of '", file, "'"))
-    }
-    returnCode <- utils::download.file(
-        url = paste0("https://raw.githubusercontent.com/ec-jrc/airsenseur-calibration/master/", URLencode(file)),
-        destfile = file,
-        method = "auto"
-    )
-    if (returnCode != 0L) {
-        stop(paste0("\n\n\t\tCould not download latest version of '", file, "'\n\n"))
-    }
-    futile.logger::flog.info(paste0("Downloaded latest version of '", file, "'"))
-}
-library(raster)
-rootWorkingDirectory <- "/home/rstudio/aqsens/jrc-aqsens-download"
+rm(list = ls())
+# files <- list("Functions4ASE", "151016 Sensor_Toolbox", "global")
+# for (file in files) {
+#     file <- paste0(file, ".R")
+#     
+#     if (file.exists(file)) {
+#         unlink(file)
+#         futile.logger::flog.info(paste0("Deleted previous version of '", file, "'"))
+#     }
+#     returnCode <- utils::download.file(
+#         url = paste0("https://raw.githubusercontent.com/ec-jrc/airsenseur-calibration/master/", URLencode(file)),
+#         destfile = file,
+#         method = "auto"
+#     )
+#     if (returnCode != 0L) {
+#         stop(paste0("\n\n\t\tCould not download latest version of '", file, "'\n\n"))
+#     }
+#     futile.logger::flog.info(paste0("Downloaded latest version of '", file, "'"))
+# }
+PossibleDir <- c("S:\\Box Sync\\AirSensEUR\\Fieldtests\\Shiny",
+                 "C:\\Bureau\\DIffusion\\Box Sync\\AirSensEUR\\Fieldtests\\Shiny",
+                 "/home/rstudio/aqsens/jrc-aqsens-download")
+for (i in PossibleDir) if (dir.exists(i)) {rootWorkingDirectory <- i; setwd(i); break()}
 setwd(rootWorkingDirectory)
+rm(PossibleDir,i)
 
 #   1.d Loading packages (global.R)
 source("global.R")
@@ -36,18 +40,13 @@ subDirModels <- "Models"
 DT.NULL    <- FALSE
 DT.General <- NULL
 Influx     <- NULL
-Sos        <- NULL
-Ref        <- NULL
 
 General.file            <- file.path(boxDirectory, subDirData, "General.csv")
 InfluxData.file         <- file.path(boxDirectory, subDirData, "InfluxData.csv")
-SOSData.file            <- file.path(boxDirectory, subDirData, "SOSData.csv")
-RefData.file            <- file.path(boxDirectory, subDirData, "RefData.csv")
 ind.warm.file           <- file.path(boxDirectory, subDirData, "ind_warm.RDS")
 ind.TRh.file            <- file.path(boxDirectory, subDirData, "ind_TRh.RDS"  )
 ind.Invalid.file        <- file.path(boxDirectory, subDirData, "ind_Invalid.RDS")
 ind.sens.out.file       <- file.path(boxDirectory, subDirData, "ind_sens_out.RDS")
-ind.ref.out.file        <- file.path(boxDirectory, subDirData, "ind_ref_out.RDS")
 # cfg_file     : The cfg file  of the Selected AirSensEUR "
 cfg_file           <- file.path(boxDirectory, subDirConfig, paste0(boxName,".cfg"))
 SETTIME_file       <- file.path(boxDirectory, subDirConfig, paste0(boxName,"_SETTIME.cfg"))
@@ -55,13 +54,14 @@ Servers_file       <- file.path(boxDirectory, subDirConfig, paste0(boxName,"_Ser
 
 # Configuration and reading of data
 Config <- CONFIG(DisqueFieldtestDir = boxDirectory,
-                 DisqueFieldtest = rootWorkingDirectory,
+                 DisqueFieldtest    = rootWorkingDirectory,
                  shiny = FALSE)
 # Returning a list with 4 elements see below
 # Config[["Server"]]   : server parameters
 # Config[["sens2ref"]] : cfg parameters
 # Config[["CovPlot"]]  : covariates for plotting
 # Config[["CovMod"]]   : covariates for calibrating
+# Config[["sens2ref.shield"]]   : Chemical shield configuration
 # initial data
 if (file.exists(InfluxData.file)) {
     if (extension(InfluxData.file) == ".csv") {
@@ -74,32 +74,6 @@ if (file.exists(InfluxData.file)) {
         if (!"data.table" %in% class(Influx)) Influx <- data.table(Influx, key = "date")
     }
     if ("V1" %in% names(Influx)) Influx[, V1 := NULL]
-}
-if (file.exists(SOSData.file)) {
-    if (extension(SOSData.file) == ".csv") {
-        Sos <- fread(file = SOSData.file, na.strings = c("","NA", "<NA>"))
-        if (!"" %in% Config$Server$SOS.TZ) {
-            data.table::set(Sos, j = "date", value =  ymd_hms(Sos[["date"]], tz = Config$Server$SOS.TZ))
-        } else data.table::set(Sos, j = "date", value =  ymd_hms(Sos[["date"]], tz = "UTC"))
-    } else if (extension(SOSData.file) == ".Rdata") {
-        Sos <- load_obj(SOSData.file)
-        if (!"data.table" %in% class(Sos)) Sos <- data.table(Sos, key = "date")
-    }
-    if ("V1" %in% names(Sos)) Sos[, V1 := NULL]
-}
-if (file.exists(RefData.file)) {
-    if (extension(RefData.file) == ".csv") {
-        Ref <- fread(file = RefData.file, na.strings = c("","NA", "<NA>"))
-        if (!"" %in% Config$Server$ref.tzone) {
-            data.table::set(Ref, j = "date", value =  ymd_hms(Ref[["date"]], tz = Config$Server$ref.tzone))
-        } else data.table::set(Ref, j = "date", value =  ymd_hms(Ref[["date"]], tz = "UTC"))
-    } else if (extension(SOSData.file) == ".Rdata") {
-        Ref <- load_obj(RefData.file)
-        if (!"data.table" %in% class(Ref)) Ref <- data.table(Ref, key = "date")
-    }
-    if ("V1" %in% names(Ref)) Ref[, V1 := NULL]
-    # Message in case coordinates are not included
-    if (!all(c("Ref.Long",  "Ref.Lat") %in% names(Ref))) cat("ERROR Coordinates of reference station missing")
 }
 if (file.exists(General.file)) {
     if (extension(General.file) == ".csv") {
@@ -134,23 +108,6 @@ if (file.exists(General.file)) {
             DT.General[both.Temp.Hum, Td_deficit := DT.General[both.Temp.Hum, "Temperature"] - Td]
         }
     }
-    if (!all(c("Ref.Absolute_humidity", "Ref.Td_deficit") %in% names(DT.General))) {
-        if (all(c("Ref.Temp", "Ref.RH") %in% names(DT.General))) {
-            DT.General$Ref.Absolute_humidity <- NA_real_
-            DT.General$Ref.Td_deficit        <- NA_real_
-            Ref.both.Temp.Hum <- complete.cases(DT.General[, c("Ref.Temp", "Ref.RH")])
-            DT.General[Ref.both.Temp.Hum, "Ref.Absolute_humidity"] <- threadr::absolute_humidity(DT.General[["Ref.Temp"]][Ref.both.Temp.Hum], DT.General[["Ref.RH"]])
-            Td <- weathermetrics::humidity.to.dewpoint(rh = DT.General[Ref.both.Temp.Hum, "Ref.RH"], t = DT.General[["Ref.Temp"]][Ref.both.Temp.Hum], temperature.metric = "celsius")
-            DT.General[Ref.both.Temp.Hum, Ref.Td_deficit := DT.General[["Ref.Temp"]][Ref.both.Temp.Hum] - Td]
-        }
-    }
-
-    # se c'e' General.Rdata ma alcuni sensori o referenze di Ref e Influx non sono in DT.General le si combina
-    if (!all(c(names(Ref)[grep(pattern = paste(c("Bin.", "boardTimeStamp", "gpsTimestamp"), collapse = "|"),
-                               x = names(Ref), invert = T)], names(Influx)) %in% names(DT.General)) ) {
-        DT.General   <- NULL
-        DT.NULL <- TRUE
-    }
 } else {
     DT.General   <- NULL
     DT.NULL <- TRUE
@@ -160,9 +117,9 @@ Download.Sensor <- Check_Download(Influx.name = Config$Server$Dataset,
                                   WDinput     = file.path(boxDirectory, subDirData),
                                   UserMins    = if (!is.null(Config$Server$UserMins)) Config$Server$UserMins else Config$Server$UserMins,
                                   General.df  = if (!is.null(DT.General))  DT.General else NA,
-                                  RefData     = if (!is.null(Ref))    Ref else NA,
+                                  RefData     = if (exists("Ref") && !is.null(Ref))    Ref else NA,
                                   InfluxData  = if (!is.null(Influx)) Influx else NA,
-                                  SOSData     = if (!is.null(Sos))    Sos else NA)
+                                  SOSData     = if (exists("Sos") && !!is.null(Sos))    Sos else NA)
 # Initial SetTime
 Set.Time        <- SETTIME(DisqueFieldtestDir = boxDirectory,
                            General.t.Valid    = DT.General,
@@ -197,13 +154,7 @@ if (file.exists(ind.sens.out.file)) ind.sens.out <- list.load(ind.sens.out.file)
     ind.sens.out <- NULL
     Outliers.Sens.Forced <- TRUE
 }
-# Indexes of outliers for sensor data
-Outliers.Ref.Forced <- FALSE
-Neg.Forced <- FALSE
-if (file.exists(ind.ref.out.file) && file.size(ind.ref.out.file) > 0) ind.ref.out <- list.load(ind.ref.out.file) else {
-    ind.ref.out <- NULL
-    Outliers.Ref.Forced <- TRUE
-}
+
 # Initialising for conversion and calibration
 Conv.Forced <- FALSE
 Cal.Forced  <- FALSE
@@ -212,7 +163,7 @@ Cal.Forced  <- FALSE
 # Returning the indexes of valid sensors in boxName.cfg taking into account NAs
 # avoid na and names of sensor in the checmical shield
 i.sensors          <- which(!is.na(Set.Time$name.gas) & Set.Time$name.gas %in% Config$sens2ref$name.gas)
-list.gas.sensor       <- Config[["sens2ref"]]$gas.sensor[!is.na(Config[["sens2ref"]]$gas.sensor) &
+list.gas.sensor    <- Config[["sens2ref"]]$gas.sensor[!is.na(Config[["sens2ref"]]$gas.sensor) &
                                                              Config[["sens2ref"]]$gas.sensor  != "" &
                                                              Config[["sens2ref"]]$name.sensor %in% Config$sens2ref.shield$name.sensor]
 list.name.sensor   <- Config[["sens2ref"]]$name.sensor[!is.na(Config[["sens2ref"]]$name.sensor) &
@@ -267,86 +218,23 @@ Download.Sensor <- Check_Download(Influx.name = Config$Server$Dataset,
                                   WDinput     = file.path(boxDirectory, subDirData),
                                   UserMins    = if (!is.null(Config$Server$UserMins)) Config$Server$UserMins else 1,
                                   General.df  = if (!is.null(DT.General))  DT.General else NA,
-                                  RefData     = if (!is.null(Ref))    Ref else NA,
+                                  RefData     = if (exists("Ref") && !is.null(Ref))    Ref else NA,
                                   InfluxData  = if (!is.null(Influx)) Influx else NA,
-                                  SOSData     = if (!is.null(Sos))    Sos else NA)
-
-# REFDATA
-# Checking if there are several ftp url
-if (any(grepl(pattern = ",", x = Config$Server$urlref))) urlref = unlist(strsplit(gsub(pattern = " ","",x = Config$Server$urlref), split = ",")  ) else urlref = gsub(pattern = " ","",x = Config$Server$urlref)
-# Setting REFDATA
-if (!is.null(Ref)) RefData <- Ref else RefData <- NA_real_
-if (Download.Sensor$ExistFil.data.Ref) {
-    Ref.start <- as.Date(Download.Sensor$DateEND.Ref.prev, format = "%Y-%m-%d")
-} else {
-    if (Download.Sensor$ExistFil.data.Influx) {
-        Ref.start <- as.Date(Download.Sensor$DateEND.Influx.prev, format = "%Y-%m-%d")
-    } else {
-        Ref.start <- as.Date(format(Sys.time(), tz = Config$Server$ref.tzone))
-    }
-}
-# Set Down.Ref to FALSE if you do not want to download reference data
-# REFDATA <- REF(DownloadSensor     = Download.Sensor,
-#                AirSensEur.name    = Config$Server$AirSensEur.name,
-#                DisqueFieldtestDir = boxDirectory,
-#                UserMins           = Config$Server$UserMins,
-#                Down.Ref           = TRUE,
-#                ref.tzone          = Config$Server$ref.tzone,
-#                InfluxData         = Influx,
-#                SOSData            = Sos,
-#                Reference.name     = Config$Server$Reference.name,
-#                urlref             = urlref,
-#                sens2ref           = Config$all[["sens2ref"]],
-#                FTPMode            = Config$Server$FTPMode,
-#                Ref.SOS.name       = Config$Server$Ref.SOS.name,
-#                RefSOSname         = Config$Server$RefSOSname,
-#                RefSOSDateIN       = Ref.start,
-#                RefSOSDateEND      = as.Date(format(Sys.time(), tz = Config$Server$ref.tzone)) + 1,
-#                Ref__a_i_p__name         = Config$Server$Ref__a_i_p__name,
-#                User__a_i_p__            = Config$Server$User__a_i_p__,
-#                Pass__a_i_p__            = Config$Server$Pass__a_i_p__,
-#                Ref__a_i_p__Organisation = Config$Server$Ref__a_i_p__Organisation,
-#                Ref__a_i_p__Station      = Config$Server$Ref__a_i_p__Station,
-#                Ref__a_i_p__Pollutants   = "Sample_air!temperature!ozone!carbon monoxide!nitrogen oxides!nitrogen dioxide!sulfur dioxide!nitrogen monoxide",
-#                Ref__a_i_p__DateIN       = Ref.start,
-#                Ref__a_i_p__DateEND      = as.Date(format(Sys.time(), tz = Config$Server$ref.tzone)) + 1,
-#                csvFile            = Config$Server$file1,
-#                csvFile.sep        = Config$Server$sep,
-#                csvFile.quote      = Config$Server$quote,
-#                coord.ref          = Config$Server$coord.ref,
-#                Ref.Type           = Config$Server$Ref.Type,
-#                RefData            = RefData,
-#                shiny              = FALSE)
-
-# updating Ref
-if (exists("REFDATA") && !is.null(REFDATA[[1]])) {
-    Ref <- REFDATA[[1]]
-    Download.Sensor <- Check_Download(Influx.name = Config$Server$Dataset,
-                                      WDinput     = file.path(boxDirectory, subDirData),
-                                      UserMins    = if (!is.null(Config$Server$UserMins)) Config$Server$UserMins else 1,
-                                      General.df  = if (!is.null(DT.General))  DT.General else NA,
-                                      RefData     = if (!is.null(Ref))    Ref else NA,
-                                      InfluxData  = if (!is.null(Influx)) Influx else NA,
-                                      SOSData     = if (!is.null(Sos))    Sos else NA)
-    Outliers.Ref.Forced <- TRUE
-    rm(REFDATA, RefData)
-} else {
-    Ref <- NULL
-}
+                                  SOSData     = if (exists("Sos") && !is.null(Sos))    Sos else NA)
 
 # Creating General Data
 # Checking that parameters for sensor download are complete or that they are new data
 if (DT.NULL ||
     isTRUE(Download.Sensor$DateEND.General.prev < Download.Sensor$DateEND.Ref.prev) ||
     isTRUE(Download.Sensor$DateEND.General.prev < Download.Sensor$DateEND.Influx.prev)) {
-
+    
     # getting what it would be to put sensor and reference data together to later compare with what is in DT.General
     D <- GENERAL(WDoutput            = file.path(boxDirectory, subDirData),
                  UserMins            = Config$Server$UserMins,
                  Delay               = Config$Server$Delay,
                  RefData             = Ref,
                  InfluxData          = Influx,
-                 SOSData             = Sos,
+                 SOSData             = if (exists("Sos") && !is.null(Sos)) Sos else NA,
                  var.name.GasSensors = list.gas.sensor  ,
                  DownloadSensor      = Download.Sensor,
                  Change.Delay        = FALSE,
@@ -378,9 +266,9 @@ if (DT.NULL ||
                                           WDinput     = file.path(boxDirectory, subDirData),
                                           UserMins    = if (!is.null(Config$Server$UserMins)) Config$Server$UserMins else 1,
                                           General.df  = if (!is.null(DT.General))  DT.General else NA,
-                                          RefData     = if (!is.null(Ref))    Ref else NA,
+                                          RefData     = if (exists(Ref) && !is.null(Ref))    Ref else NA,
                                           InfluxData  = if (!is.null(Influx)) Influx else NA,
-                                          SOSData     = if (!is.null(Sos))    Sos else NA)
+                                          SOSData     = if (exists(Sos) && !is.null(Sos))    Sos else NA)
     }
     rm(D)
 }
@@ -522,7 +410,7 @@ if (Inv.Forced) {
             }
         }
     }
-
+    
     ind.Invalid.out <- list(Valid.date,ind.Inval)
     # make sure that Outliers.Sens$Forced is run after Invalid, to discard outliers again and to apply invalid and outliers to DT.General
     Outliers.Sens.Forced <- TRUE
@@ -530,6 +418,7 @@ if (Inv.Forced) {
     rm(Valid)
 }
 for (i in list.name.sensor) assign(paste0("Valid_",i),NULL)
+rm(i)
 
 # discard outliers of sensors
 if (Outliers.Sens.Forced) {
@@ -615,92 +504,13 @@ if (Outliers.Sens.Forced) {
     if (exists("return.ind.sens.out"))  ind.sens.out <- return.ind.sens.out
     # reseting return.ind.sens.out
     if (exists("return.ind.sens.out")) rm(return.ind.sens.out)
-
+    
     # Force conversion of sensors
     Conv.Forced <- TRUE
     rm(Outli)
 }
 for (i in 1:length(list.gas.sensor)) for (j in 1:Config$sens2ref$Sens.iterations[i]) assign(paste0(list.gas.sensor[i],".",j),NULL)
-
-# discard outliers of reference data
-if (!is.null(Ref) && Outliers.Ref.Forced) {
-    # list of index of negative values
-    ################################ ADD a Test to check that all reference parameters exists ######################
-    ind.neg <- apply(X = DT.General[, .SD, .SDcols = list.gas.reference2use], MARGIN = 2, function(x) {which(x < 0)})
-    for (i in list.gas.reference2use) {
-        # resetting to initial values
-        Vector.columns <- paste0(c("Out.", "Out.Neg."),i)
-        set(DT.General, j = Vector.columns, value = rep(list(DT.General[[i]]), times = length(Vector.columns)))
-        # discarding negative values if needed
-        # number index of reference pollutant in the list of references
-        k <- match(x = i, table = list.gas.reference2use)
-        if (Config$sens2ref$Ref.rm.Out[k]) {
-            if (length(ind.neg) > 0 && length(ind.neg[[i]]) > 0) { # exists(ind.neg[[i]]) &&
-                set(DT.General,i = ind.neg[[i]], j = Vector.columns, value = rep(list(rep(NA, times = length(ind.neg[[i]]))), times = length(Vector.columns)))
-            }
-        }
-        set(DT.General, j = paste0("Out.",i,".",1:Config$sens2ref$Ref.iterations[k]),
-            value = rep(list(DT.General[[paste0("Out.Neg.",i)]]), times = Config$sens2ref$Ref.iterations[k]))
-        # deleting bigger iterations
-        j  <- Config$sens2ref$Ref.iterations[k]
-        repeat (
-            if (any(grepl(pattern = paste0("Out.",i,".", j + 1)      , x = names(DT.General)))) {
-                set(DT.General, j = paste0("Out.",i,".",j + 1), value = NULL)
-                j <- j + 1
-            } else break # leaving the Repeat if there are no higher iterations
-        )
-        # Index of outliers for reference data
-        if (Config$sens2ref$Ref.rm.Out[k]) {
-            for (j in 1:Config$sens2ref$Ref.iterations[k]) { # numver of iterations
-                if (i %in% names(DT.General)) {
-                    if (all(is.na(DT.General[[i]]))) {
-                    } else {
-                        Y <- DT.General[[paste0("Out.Neg.",i)]]
-                        # setting the outliers of previous iterations to NA. If null then stop outlier detection
-                        if (j > 1) {
-                            if (length(which(return.ind.ref.out[[paste0(i,".",(j - 1))]]$Outliers)) != 0) {
-                                Y[as.numeric(paste(unlist(sapply(return.ind.ref.out[c(paste0(i,".",1:(j - 1)))], function(x) which(x$Outliers)))))] <- NA
-                            }  else break
-                        }
-                        Outli <- My.rm.Outliers(ymin         = Config$sens2ref$Ref.Ymin[k],
-                                                ymax         = Config$sens2ref$Ref.Ymax[k],
-                                                ThresholdMin = Config$sens2ref$Ref.ThresholdMin[k],
-                                                date         = DT.General[["date"]],
-                                                y            = Y,
-                                                window       = Config$sens2ref$Ref.window[k],
-                                                threshold    = Config$sens2ref$Ref.threshold[k],
-                                                plotting     = FALSE
-                        )
-                        nameInd      <- paste0(i,".",j)
-                        OutlinameInd <- paste0(i,".",j,".Outli")
-                        assign(nameInd , data.frame(date = Outli$date,
-                                                    Outliers = unlist(apply(Outli[,c("Low_values","High_values","OutliersMin","OutliersMax")],
-                                                                            MARGIN = 1,
-                                                                            function(x) any(x))),
-                                                    stringsAsFactors = FALSE))
-                        if (exists("return.ind.ref.out")) return.ind.ref.out[[nameInd]] <- get(nameInd) else {
-                            return.ind.ref.out <- list(get(nameInd))
-                            names(return.ind.ref.out) <- nameInd
-                        }
-                        return.ind.ref.out[[OutlinameInd]] <- Outli
-                        # Discarding outliers
-                        if (any(names(return.ind.ref.out) %in% paste0(i,".",j), na.rm = TRUE)) {
-                            set(DT.General,i = which(return.ind.ref.out[[paste0(i,".",j)]]$Outliers), j = paste0("Out."      ,i),
-                                value = list(rep(NA, times = length(which(return.ind.ref.out[[paste0(i,".",j)]]$Outliers)))))
-                            set(DT.General,i = which(return.ind.ref.out[[paste0(i,".",j)]]$Outliers), j = paste0("Out.",i,".",j),
-                                value = list(rep(NA, times = length(which(return.ind.ref.out[[paste0(i,".",j)]]$Outliers)))))
-                        }
-                    }
-                } else cat("[Shiny, ind.ref.out()] ERROR, Warning no reference values impossible to discard outliers\n")
-            }
-        }
-    }
-    if (exists("return.ind.ref.out")) ind.ref.out <- return.ind.ref.out
-    # reseting return.ind.ref.out
-    if (exists("return.ind.ref.out")) rm(return.ind.ref.out)
-    rm(Outli)
-    for (i in 1:length(list.gas.reference2use)) for (j in 1:Config$sens2ref$Ref.iterations[i]) assign(paste0(list.gas.reference2use[i],".",j),NULL)
-}
+rm(i,j)
 
 # Conversion and calibration
 # list of possible model types
@@ -849,14 +659,15 @@ if (Conv.Forced || Cal.Forced) {
         }
     } else cat("ERROR, THERE IS NO General.df or no sensor data converted to voltage or current.\n")
 }
-# this clean-up loop is just for devlopment. No need to migrate to airsenseurimporter
-files <- list("Functions4ASE", "151016 Sensor_Toolbox", "global")
-for (file in files) {
-    file <- paste0(file, ".R")
-    if (file.exists(file)) {
-        unlink(file)
-        futile.logger::flog.info(paste0("Deleted previous version of '", file, "'"))
-    }
-}
-rm(files)
+# # this clean-up loop is just for devlopment. No need to migrate to airsenseurimporter
+# files <- list("Functions4ASE", "151016 Sensor_Toolbox", "global")
+# for (file in files) {
+#     file <- paste0(file, ".R")
+#     if (file.exists(file)) {
+#         unlink(file)
+#         futile.logger::flog.info(paste0("Deleted previous version of '", file, "'"))
+#     }
+# }
+# rm(files)
+
 setwd(rootWorkingDirectory)
